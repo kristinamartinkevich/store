@@ -1,17 +1,19 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../../../store';
+import { ProductOrder } from '../../../../model';
 
 const Cart: React.FC = () => {
-    const cartItems = useSelector((state: RootState) => state.cart.items);
+    const cartItems: ProductOrder[] = [];
 
     return (
         <div>
             <h2>Cart</h2>
             <ul>
                 {cartItems.map(item => (
-                    <li key={item.product.id}>
-                        {item.product.name} - Quantity: {item.quantity}
+                    <li key={item.product}>
+                        {item.product}
+                        <span>
+                            ₽{item.quantity * item.price}
+                        </span>
                     </li>
                 ))}
             </ul>

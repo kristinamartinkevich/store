@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Col, ListGroup, Row } from 'react-bootstrap';
+import { Col, Container, ListGroup, Row } from 'react-bootstrap';
 import { fetchCategories } from '../../utils/api';
 import { Category } from '../../../../model';
 
@@ -40,27 +40,25 @@ const CategoryList: React.FC<Props> = ({ onCategorySelect }) => {
     };
 
     return (
-        <>
+        <Container className='mb-4'>
             <Row className='justify-content-start'>
                 <Col sm="3">
                     <h2>Категории товаров</h2>
                 </Col>
             </Row>
-            <ul>
-                <ListGroup horizontal>
-                    {categories.map((category: Category, index) => (
-                        <ListGroup.Item
-                            key={category.id}
-                            variant={variants[index % variants.length]}
-                            onClick={() => handleCategoryClick(category.id)}
-                            active={selectedCategoryId === category.id}
-                        >
-                            {category.name}
-                        </ListGroup.Item>
-                    ))}
-                </ListGroup>
-            </ul>
-        </>
+            <ListGroup horizontal>
+                {categories.map((category: Category, index) => (
+                    <ListGroup.Item
+                        key={category.id}
+                        variant={variants[index % variants.length]}
+                        onClick={() => handleCategoryClick(category.id)}
+                        active={selectedCategoryId === category.id}
+                    >
+                        {category.name}
+                    </ListGroup.Item>
+                ))}
+            </ListGroup>
+        </Container>
     );
 };
 

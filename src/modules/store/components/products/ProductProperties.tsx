@@ -5,15 +5,20 @@ import { fetchProductVariationPropertiesById, fetchProductVariationPropertyListV
 
 interface Props {
     productVariations: ProductVariation[];
+    onPropertyChange: (property: string) => void;
 }
 
 interface Property {
-    name: string, value: any, values: any[]
+    name: string, values: any[]
 }
 
-const ProductProperties: React.FC<Props> = ({ productVariations }) => {
+const ProductProperties: React.FC<Props> = ({ productVariations, onPropertyChange }) => {
     const [properties, setProperties] = useState<Property[]>([]);
     let count = 0;
+
+    const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        onPropertyChange(event.target.value);
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -23,30 +28,10 @@ const ProductProperties: React.FC<Props> = ({ productVariations }) => {
                 const productVariationPropertyData: ProductVariationPropertyValues[] = await fetchProductVariationPropertyValuesById(productVariations[0].id)
                 for (const productVariationProperty of productVariationPropertyData) {
                     const productVariationPropertyId: ProductVariationProperties = await fetchProductVariationPropertiesById(productVariationProperty.product_variation_property_id)
-                    if (productVariationPropertyId.type == 0) {
-                        propertiesData.push({
-                            name: productVariationPropertyId.name + ": ",
-                            value: productVariationProperty.value_string,
-                            values: []
-                        })
-                    } else if (productVariationPropertyId.type == 1) {
-                        propertiesData.push({
-                            name: productVariationPropertyId.name + ": ",
-                            value: productVariationProperty.value_int,
-                            values: []
-                        })
-                    } else if (productVariationPropertyId.type == 2) {
-                        propertiesData.push({
-                            name: productVariationPropertyId.name + ": ",
-                            value: productVariationProperty.value_float,
-                            values: []
-                        })
-                    }
-                    else if (productVariationPropertyId.type == 3) {
+                    if (productVariationPropertyId.type == 3) {
                         const productVariationPropertyListValue: ProductVariationPropertyListValues[] = await fetchProductVariationPropertyListValues(productVariationProperty.product_variation_property_id)
                         propertiesData.push({
-                            name: productVariationPropertyId.name + ": ",
-                            value: '',
+                            name: productVariationPropertyId.name,
                             values: productVariationPropertyListValue.map(item => item.value)
                         })
                     }
@@ -68,17 +53,14 @@ const ProductProperties: React.FC<Props> = ({ productVariations }) => {
                     <p>Загрузка свойств товара...</p>
                 ) : (
                     properties.map((property) => (
-                        <div key={property.name}>
-                            <span className='text-muted'>{property.name}</span>
-                            <h6>{property.value}</h6>
-                            {property.values.length > 0 &&
-                                <Form.Select>
-                                    {property.values.map((value) => (
-                                        <option>{value}</option>
-                                    ))}
-                                </Form.Select>
-                            }
-                        </div>
+                        <span key={property.name}>
+                            <Form.Select onChange={handleSelectChange} required>
+                                <option className='text-muted'>Выбрать {property.name}</option>
+                                {property.values.map((value) => (
+                                    <option value={value}>{value}</option>
+                                ))}
+                            </Form.Select>
+                        </span>
                     ))
                 )
             }

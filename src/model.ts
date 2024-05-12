@@ -44,3 +44,15 @@ export interface ProductVariationPropertyValues {
     value_float: number;
     product_variation_property_list_value_id: number;
 }
+
+export interface ProductOrder {
+    product: string;
+    quantity: number;
+    price: number;
+    property: string;
+
+    name: string;
+    address: string;
+    phone: string;
+    time: string;
+}

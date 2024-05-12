@@ -1,11 +1,11 @@
 import React from 'react';
 
 const OrderHistory: React.FC = () => {
+    const order = localStorage.getItem("order");
 
     return (
         <div>
-            <h2>Order History</h2>
-            <p>This is where the list of orders will be displayed.</p>
+            {order}
         </div>
     );
 };

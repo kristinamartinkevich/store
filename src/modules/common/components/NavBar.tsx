@@ -2,9 +2,8 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Icon from '@mdi/react';
-import { mdiMapMarkerOutline, mdiMagnify, mdiCartOutline, mdiAccount } from '@mdi/js';
-import { Badge, Form, InputGroup } from 'react-bootstrap';
-
+import { mdiMapMarkerOutline, mdiCartOutline, mdiAccount } from '@mdi/js';
+import { Badge } from 'react-bootstrap';
 
 function NavBar() {
     return (
@@ -18,20 +17,13 @@ function NavBar() {
                             <Icon path={mdiMapMarkerOutline} size={1} />
                             Александровск-Са...
                         </Nav.Link>
-
-                        <Form.Group>
-                            <InputGroup>
-                                <Form.Control
-                                    placeholder=" Поиск бренда, товара, категории..."
-                                />
-                                <InputGroup.Text><Icon path={mdiMagnify} size={1} /></InputGroup.Text>
-                            </InputGroup>
-                        </Form.Group>
-                        <div className='rounded-circle p-3 border mx-2'>
-                            <Icon path={mdiCartOutline} size={1} />
-                            <Badge bg="secondary">9</Badge>
-                        </div>
-                        <div className='rounded-circle p-3 border'>
+                        <Nav.Link href="/order">
+                            <div className='rounded-circle p-3 border mx-2'>
+                                <Icon path={mdiCartOutline} size={1} />
+                                <Badge bg="secondary">9</Badge>
+                            </div>
+                        </Nav.Link>
+                        <div className='rounded-circle p-3 border' >
                             <Icon path={mdiAccount} size={1} />
                         </div>
                     </Nav>

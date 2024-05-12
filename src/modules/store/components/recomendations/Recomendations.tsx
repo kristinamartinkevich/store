@@ -12,7 +12,9 @@ function Recomendations() {
     return (
         <>
             <CategoryList onCategorySelect={handleCategorySelect} />
-            {selectedCategoryId && <ProductList categoryId={selectedCategoryId} />}
+            <div className='product-list'>
+                {selectedCategoryId && <ProductList categoryId={selectedCategoryId} />}
+            </div>
         </>
     );
 }
