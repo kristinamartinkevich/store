@@ -137,9 +137,9 @@ Adaptive layout for mobile devices.
 
 Addendum 01/2024 - make a variant with 0% discount. Discount is not processed in any way.
 
-![Cart](https://github.com/kristinamartinkevich/store/src/assets/Cart.png?raw=true)
-![Delivery](https://github.com/kristinamartinkevich/store/src/assets/Delivery.png?raw=true)
-![OrderHistory](https://github.com/kristinamartinkevich/store/src/assets/OrderHistory.png?raw=true)
-![Recomendations](https://github.com/kristinamartinkevich/store/src/assets/Recomendations.png?raw=true)
+![Cart](https://github.com/kristinamartinkevich/store/blob/main/src/assets/Cart.png?raw=true)
+![Delivery](https://github.com/kristinamartinkevich/store/blob/main/src/assets/Delivery.png?raw=true)
+![OrderHistory](https://github.com/kristinamartinkevich/store/blob/main/src/assets/OrderHistory.png?raw=true)
+![Recomendations](https://github.com/kristinamartinkevich/store/blob/main/src/assets/Recomendations.png?raw=true)
 
 # store
