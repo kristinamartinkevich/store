@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Card } from 'react-bootstrap';
+import { Button, Card } from 'react-bootstrap';
 import { Product, ProductVariation } from '../../../../model';
 import { ProductWithImage } from './ProductList';
 import { fetchProductVariationsByProductId } from '../../utils/api';
 import ProductDetails from './ProductDetails';
+import Properties from './ProductProperties';
 
 interface Props {
     product: ProductWithImage;
@@ -12,17 +13,21 @@ interface Props {
 
 const ProductCard: React.FC<Props> = ({ product }) => {
     const [productVariations, setProductVariations] = useState<ProductVariation[]>([]);
-    const [show, setShow] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState<ProductWithImage>();
 
-    const handleShowProductDetails = () => {
-        setSelectedProduct(product);
-        setShow(true);
+    let minPrice = 0;
+
+    const [quantity, setQuantity] = useState<number>(0);
+
+    const incrementQuantity = () => {
+        if (quantity < productVariations[0]?.stock) {
+            setQuantity(quantity + 1);
+        }
     };
 
-    const handleCloseProductDetails = () => {
-        setShow(false);
-        setSelectedProduct(undefined);
+    const decrementQuantity = () => {
+        if (quantity > 0) {
+            setQuantity(quantity - 1);
+        }
     };
 
     useEffect(() => {
@@ -30,6 +35,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
             try {
                 const productVariationData = await fetchProductVariationsByProductId(product.id);
                 setProductVariations(productVariationData);
+                minPrice = Math.min(...productVariations.map(productVariation => productVariation.price));
             } catch (error) {
                 console.error('Error fetching products:', error);
             }
@@ -40,28 +46,25 @@ const ProductCard: React.FC<Props> = ({ product }) => {
     return (
         <>
             <Card className='align-items-center'>
-                <Card.Img variant="top" src={product.image} style={{ width: '15rem' }} />
+                <Card.Img variant="top" src={product.image} style={{ height: '10rem', width: 'auto' }} />
                 <Card.Body>
                     <Card.Text>
-                        {product.name}
+                        <h2>{product.name}</h2>
                         {productVariations.map((productVariation) => (
-                            <span key={productVariation.product_id}>
-                                - ₽{productVariation.price}
-                            </span>
+                            <h4 className='text-primary' key={productVariation.product_id}>
+                                ₽{productVariation.price}
+                            </h4>
                         ))}
+                        {productVariations.length > 0 &&
+                            <Properties productVariations={productVariations} />
+                        }
                     </Card.Text>
-                    <button onClick={handleShowProductDetails}>Add to Cart</button>
+                    <Button variant="primary" onClick={decrementQuantity}>-</Button>
+                    {quantity} (Макс. {productVariations[0]?.stock})
+                    <Button variant="primary" onClick={incrementQuantity}>+</Button>
+                    <Button>Добавить в Корзину</Button>
                 </Card.Body>
             </Card>
-
-            {selectedProduct && (
-                <ProductDetails
-                    product={selectedProduct}
-                    productVariations={productVariations}
-                    show={show}
-                    handleClose={handleCloseProductDetails}
-                />
-            )}
         </>
     );
 };

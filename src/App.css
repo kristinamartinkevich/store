@@ -9,8 +9,9 @@
 }
 
 .footer {
-  position: fixed;
-  left: 0;
+  margin-top: auto;
+  position: static;
   bottom: 0;
-  width: 100vw;
+  left: 0;
+  width: 100%;
 }

@@ -26,7 +26,7 @@ const CategoryList: React.FC<Props> = ({ onCategorySelect }) => {
         const fetchData = async () => {
             try {
                 const categoriesData = await fetchCategories();
-                setCategories(categoriesData)
+                setCategories(categoriesData);
             } catch (error) {
                 console.error('Error fetching products:', error);
             }

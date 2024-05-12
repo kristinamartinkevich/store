@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchProductImagesByProductId, fetchProductsByCategoryId } from '../../utils/api';
-import { Card, Col, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import ProductCard from './ProductCard';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Image, Product } from '../../../../model';
@@ -19,14 +19,14 @@ export interface ProductWithImage {
 
 const ProductList: React.FC<Props> = ({ categoryId }) => {
     const [products, setProducts] = useState<ProductWithImage[]>([]);
-    const [offset, setOffset] = useState<number>(0);
+    const [offset, setOffset] = useState<number>(5);
     const [hasMore, setHasMore] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const productsData = await fetchProductsByCategoryId(categoryId, 0);
-                productsData.length > 0 ? setHasMore(true) : setHasMore(false);
+                const productsData = await fetchProductsByCategoryId(categoryId, offset);
+                productsData.length !== products.length ? setHasMore(true) : setHasMore(false);
                 const productsWithImages = await Promise.all(productsData.map(async (product: Product) => {
                     const imagesData = await fetchProductImagesByProductId(product.id);
                     const imageUrl = imagesData.map((image: Image) => image.image_url)[0];
@@ -38,25 +38,9 @@ const ProductList: React.FC<Props> = ({ categoryId }) => {
                 console.error('Error fetching products:', error);
             }
         };
-        fetchData();
-    }, [categoryId]);
 
-
-    const fetchMoreData = async () => {
-        try {
-            const productsData = await fetchProductsByCategoryId(categoryId, offset);
-            productsData.length > 0 ? setHasMore(true) : setHasMore(false);
-            const productsWithImages = await Promise.all(productsData.map(async (product: Product) => {
-                const imagesData = await fetchProductImagesByProductId(product.id);
-                const imageUrl = imagesData.map((image: Image) => image.image_url)[0];
-                return { ...product, image: imageUrl };
-            }));
-
-            setProducts(prevProducts => [...prevProducts, ...productsWithImages]);
-        } catch (error) {
-            console.error('Error fetching products:', error);
-        }
-    };
+        fetchData()
+    }, [categoryId, offset]);
 
     const handleAddToCart = (product: any) => {
 
@@ -64,7 +48,6 @@ const ProductList: React.FC<Props> = ({ categoryId }) => {
 
     const onScroll = () => {
         setOffset(prevOffset => prevOffset + 10);
-        fetchMoreData()
     };
 
     return (
@@ -73,8 +56,8 @@ const ProductList: React.FC<Props> = ({ categoryId }) => {
                 dataLength={products.length}
                 next={onScroll}
                 hasMore={hasMore}
-                loader={<p>Loading...</p>}
-                endMessage={<p>No more data to load.</p>}
+                loader={<p>Загрузка...</p>}
+                endMessage={<p>Нет Данных</p>}
                 scrollThreshold={0.9}
             >
                 <Row>
