@@ -28,9 +28,9 @@ export const fetchCategoryById = async (categoryId: number) => {
     }
 };
 
-export const fetchProductsByCategoryId = async (categoryId: number) => {
+export const fetchProductsByCategoryId = async (categoryId: number, offset: number) => {
     try {
-        const response = await fetch(`${BASE_URL}Products?sort=["name","ASC"]&range=[0,24]&filter={"category_id":${categoryId}}`);
+        const response = await fetch(`${BASE_URL}Products?sort=["name","ASC"]&range=[${offset},${offset + 10}]&filter={"category_id":${categoryId}}`);
         if (!response.ok) {
             throw new Error('Failed to fetch products');
         }
@@ -53,6 +53,20 @@ export const fetchProductById = async (productId: number) => {
     } catch (error) {
         console.error(`Error fetching product with ID ${productId}:`, error);
         return null;
+    }
+};
+
+export const fetchProductImages = async () => {
+    try {
+        const response = await fetch(`${BASE_URL}ProductImages?sort=["image_name","ASC"]&range=[0,100]`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch product images');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(`Error fetching product images`, error);
+        return [];
     }
 };
 
@@ -84,9 +98,9 @@ export const fetchProductVariationsByProductId = async (productId: number) => {
     }
 };
 
-export const fetchProductVariationProperties = async () => {
+export const fetchProductVariationPropertiesById = async (propertyId: number) => {
     try {
-        const response = await fetch(`${BASE_URL}ProductVariationProperties`);
+        const response = await fetch(`${BASE_URL}ProductVariationProperties/${propertyId}`);
         if (!response.ok) {
             throw new Error('Failed to fetch product variation properties');
         }
@@ -112,7 +126,7 @@ export const fetchProductVariationPropertyListValues = async (propertyId: number
     }
 };
 
-export const fetchProductVariationPropertyValues = async (variationId: number) => {
+export const fetchProductVariationPropertyValuesById = async (variationId: number) => {
     try {
         const response = await fetch(`${BASE_URL}ProductVariationPropertyValues?filter={"product_variation_id":${variationId}}`);
         if (!response.ok) {

@@ -1,33 +1,68 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card } from 'react-bootstrap';
-
-interface Product {
-    id: number;
-    category_id: number;
-    description: string;
-    name: string;
-}
+import { Product, ProductVariation } from '../../../../model';
+import { ProductWithImage } from './ProductList';
+import { fetchProductVariationsByProductId } from '../../utils/api';
+import ProductDetails from './ProductDetails';
 
 interface Props {
-    product: Product;
+    product: ProductWithImage;
     onAddToCart: (product: Product) => void;
 }
 
-const ProductCard: React.FC<Props> = ({ product, onAddToCart }) => {
-    const handleAddToCart = () => {
-        onAddToCart(product);
+const ProductCard: React.FC<Props> = ({ product }) => {
+    const [productVariations, setProductVariations] = useState<ProductVariation[]>([]);
+    const [show, setShow] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState<ProductWithImage>();
+
+    const handleShowProductDetails = () => {
+        setSelectedProduct(product);
+        setShow(true);
     };
 
+    const handleCloseProductDetails = () => {
+        setShow(false);
+        setSelectedProduct(undefined);
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const productVariationData = await fetchProductVariationsByProductId(product.id);
+                setProductVariations(productVariationData);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        };
+        fetchData();
+    }, [product]);
+
     return (
-        <div>
-            <Card.Img variant="top" src={product.image} style={{ width: 'auto', height: '200px' }} />
-            <Card.Body>
-                <Card.Text>
-                    {product.name} - ${product.price}
-                </Card.Text>
-                <button onClick={handleAddToCart}>Add to Cart</button>
-            </Card.Body>
-        </div>
+        <>
+            <Card className='align-items-center'>
+                <Card.Img variant="top" src={product.image} style={{ width: '15rem' }} />
+                <Card.Body>
+                    <Card.Text>
+                        {product.name}
+                        {productVariations.map((productVariation) => (
+                            <span key={productVariation.product_id}>
+                                - ₽{productVariation.price}
+                            </span>
+                        ))}
+                    </Card.Text>
+                    <button onClick={handleShowProductDetails}>Add to Cart</button>
+                </Card.Body>
+            </Card>
+
+            {selectedProduct && (
+                <ProductDetails
+                    product={selectedProduct}
+                    productVariations={productVariations}
+                    show={show}
+                    handleClose={handleCloseProductDetails}
+                />
+            )}
+        </>
     );
 };
 

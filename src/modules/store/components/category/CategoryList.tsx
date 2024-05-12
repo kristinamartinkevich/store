@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../../../../store';
-import { fetchCategoriesFailure, fetchCategoriesStart, fetchCategoriesSuccess, Category } from './CategorySlice';
 import { Col, ListGroup, Row } from 'react-bootstrap';
+import { fetchCategories } from '../../utils/api';
+import { Category } from '../../../../model';
 
 interface Props {
     onCategorySelect: (categoryId: number) => void;
@@ -20,34 +19,25 @@ const variants = [
 ];
 
 const CategoryList: React.FC<Props> = ({ onCategorySelect }) => {
-    const dispatch = useDispatch();
-    const { categories, loading, error } = useSelector((state: RootState) => state.categories);
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+    const [categories, setCategories] = useState<Category[]>([]);
 
     useEffect(() => {
-        const fetchCategoryData = async () => {
+        const fetchData = async () => {
             try {
-                dispatch(fetchCategoriesStart());
-                const response = await fetch('https://test2.sionic.ru/api/Categories?sort=["name","ASC"]&range=[0,24]');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch categories');
-                }
-                const data = await response.json();
-                dispatch(fetchCategoriesSuccess(data));
+                const categoriesData = await fetchCategories();
+                setCategories(categoriesData)
             } catch (error) {
-                dispatch(fetchCategoriesFailure(error.message));
+                console.error('Error fetching products:', error);
             }
         };
-        fetchCategoryData();
-    }, [dispatch, onCategorySelect]);
+        fetchData();
+    }, []);
 
     const handleCategoryClick = (categoryId: number) => {
         setSelectedCategoryId(categoryId);
         onCategorySelect(categoryId);
     };
-
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
 
     return (
         <>
