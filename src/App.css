@@ -1,0 +1,9 @@
+#root {
+  margin: 0 auto;
+  text-align: center;
+}
+
+:root {
+  --bs-font-sans-serif: "Raleway",
+    sans-serif !important
+}
