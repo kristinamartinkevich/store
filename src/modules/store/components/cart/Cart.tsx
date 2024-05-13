@@ -1,23 +1,29 @@
-import React from 'react';
 import { ProductOrder } from '../../../../model';
+import OrderForm from './OrderForm';
+import { Col, Row } from 'react-bootstrap';
 
-const Cart: React.FC = () => {
+const Cart = () => {
     const cartItems: ProductOrder[] = [];
 
     return (
-        <div>
-            <h2>Cart</h2>
-            <ul>
-                {cartItems.map(item => (
-                    <li key={item.product}>
-                        {item.product}
-                        <span>
-                            ₽{item.quantity * item.price}
-                        </span>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <Row className='justify-content-center my-2'>
+            <Col>
+                <h2>Cart</h2>
+                <ul>
+                    {cartItems.map(item => (
+                        <li key={item.product}>
+                            {item.product}
+                            <span>
+                                ₽{item.quantity * item.price}
+                            </span>
+                        </li>
+                    ))}
+                </ul>
+            </Col>
+            <Col>
+                <OrderForm />
+            </Col>
+        </Row>
     );
 };
 

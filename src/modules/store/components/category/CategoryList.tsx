@@ -41,14 +41,11 @@ const CategoryList: React.FC<Props> = ({ onCategorySelect }) => {
 
     return (
         <Container className='mb-4'>
-            <Row className='justify-content-start'>
-                <Col sm="3">
-                    <h2>Категории товаров</h2>
-                </Col>
-            </Row>
-            <ListGroup horizontal>
+            <ListGroup as="ul" horizontal={'md'}>
+                <ListGroup.Item as="li" disabled>Категории товаров
+                </ListGroup.Item>
                 {categories.map((category: Category, index) => (
-                    <ListGroup.Item
+                    <ListGroup.Item as="li" action
                         key={category.id}
                         variant={variants[index % variants.length]}
                         onClick={() => handleCategoryClick(category.id)}

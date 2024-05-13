@@ -9,7 +9,7 @@ interface Props {
 }
 
 interface Property {
-    name: string, values: any[]
+    name: string, values: any[], price: number
 }
 
 const ProductProperties: React.FC<Props> = ({ productVariations, onPropertyChange }) => {
@@ -25,15 +25,18 @@ const ProductProperties: React.FC<Props> = ({ productVariations, onPropertyChang
             count++;
             let propertiesData: Property[] = [];
             try {
-                const productVariationPropertyData: ProductVariationPropertyValues[] = await fetchProductVariationPropertyValuesById(productVariations[0].id)
-                for (const productVariationProperty of productVariationPropertyData) {
-                    const productVariationPropertyId: ProductVariationProperties = await fetchProductVariationPropertiesById(productVariationProperty.product_variation_property_id)
-                    if (productVariationPropertyId.type == 3) {
-                        const productVariationPropertyListValue: ProductVariationPropertyListValues[] = await fetchProductVariationPropertyListValues(productVariationProperty.product_variation_property_id)
-                        propertiesData.push({
-                            name: productVariationPropertyId.name,
-                            values: productVariationPropertyListValue.map(item => item.value)
-                        })
+                for (const productVariation of productVariations) {
+                    const productVariationPropertyData: ProductVariationPropertyValues[] = await fetchProductVariationPropertyValuesById(productVariation.id)
+                    for (const productVariationProperty of productVariationPropertyData) {
+                        const productVariationPropertyId: ProductVariationProperties = await fetchProductVariationPropertiesById(productVariationProperty.product_variation_property_id)
+                        if (productVariationPropertyId.type == 3) {
+                            const productVariationPropertyListValue: ProductVariationPropertyListValues[] = await fetchProductVariationPropertyListValues(productVariationProperty.product_variation_property_id)
+                            propertiesData.push({
+                                name: productVariationPropertyId.name,
+                                values: productVariationPropertyListValue.map(item => item.value),
+                                price: productVariation.price
+                            })
+                        }
                     }
                 }
                 setProperties(propertiesData);
@@ -57,7 +60,7 @@ const ProductProperties: React.FC<Props> = ({ productVariations, onPropertyChang
                             <Form.Select onChange={handleSelectChange} required>
                                 <option className='text-muted'>Выбрать {property.name}</option>
                                 {property.values.map((value) => (
-                                    <option value={value}>{value}</option>
+                                    <option value={value}>{value}, ₽{property.price}</option>
                                 ))}
                             </Form.Select>
                         </span>

@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Card } from 'react-bootstrap';
 import { ProductVariation } from '../../../../model';
-import { ProductWithImage } from './ProductList';
-import { fetchProductVariationsByProductId } from '../../utils/api';
+import { ProductData } from './ProductList';
 import ProductDetails from './ProductDetails';
 
 interface Props {
-    product: ProductWithImage;
+    product: ProductData;
 }
 
 const ProductCard: React.FC<Props> = ({ product }) => {
-    const [productVariations, setProductVariations] = useState<ProductVariation[]>([]);
     const [show, setShow] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState<ProductWithImage>();
+    const [selectedProduct, setSelectedProduct] = useState<ProductData>();
+    const minPrice = Math.min(...product?.productVariations.map((productVariation: ProductVariation) => productVariation.price));
 
     const handleShowProductDetails = () => {
         setSelectedProduct(product);
@@ -23,20 +22,6 @@ const ProductCard: React.FC<Props> = ({ product }) => {
         setShow(false);
         setSelectedProduct(undefined);
     };
-    let minPrice = 0;
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const productVariationData = await fetchProductVariationsByProductId(product.id);
-                setProductVariations(productVariationData);
-                minPrice = Math.min(...productVariations.map(productVariation => productVariation.price));
-            } catch (error) {
-                console.error('Error fetching product variation:', error);
-            }
-        };
-        fetchData();
-    }, [product]);
 
     return (
         <>
@@ -45,18 +30,16 @@ const ProductCard: React.FC<Props> = ({ product }) => {
                 <Card.Body>
                     <Card.Text>
                         <h6 className='text-truncate product-title'>{product.name}</h6>
-                        {productVariations.map((productVariation) => (
-                            <h4 className='text-primary' key={productVariation.product_id}>
-                                ₽{productVariation.price}
-                            </h4>
-                        ))} <Button onClick={handleShowProductDetails}>Добавить в Корзину</Button>
+                        <span className='text-primary h4' >
+                            ₽{minPrice}
+                        </span>
                     </Card.Text>
+                    <Button onClick={handleShowProductDetails}>Добавить в Корзину</Button>
                 </Card.Body>
             </Card>
             {selectedProduct && (
                 <ProductDetails
                     product={selectedProduct}
-                    productVariations={productVariations}
                     show={show}
                     handleClose={handleCloseProductDetails}
                 />

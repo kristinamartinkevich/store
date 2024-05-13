@@ -28,9 +28,9 @@ export const fetchCategoryById = async (categoryId: number) => {
     }
 };
 
-export const fetchProductsByCategoryId = async (categoryId: number, offset: number) => {
+export const fetchProductsByCategoryId = async (order: 'ASC' | 'DESC', categoryId: number, offset: number) => {
     try {
-        const response = await fetch(`${BASE_URL}Products?sort=["name","ASC"]&range=[0,${offset}]&filter={"category_id":${categoryId}}`);
+        const response = await fetch(`${BASE_URL}Products?sort=["name","${order}"]&range=[0,${offset}]&filter={"category_id":${categoryId}}`);
         if (!response.ok) {
             throw new Error('Failed to fetch products');
         }

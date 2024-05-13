@@ -1,30 +1,36 @@
 import React, { useState } from 'react';
 import { Modal, Button, Row, Col, Form } from 'react-bootstrap';
-import { ProductVariation } from '../../../../model';
-import { ProductWithImage } from './ProductList';
 import ProductProperties from './ProductProperties';
+import { ProductData } from './ProductList';
+import { addToCart } from '../../../../actions';
+import QuantityButtons from './QuantityButtons';
 
 interface Props {
-    product: ProductWithImage;
+    product: ProductData;
     show: boolean;
-    productVariations: ProductVariation[];
     handleClose: () => void;
 }
 
-const ProductDetails: React.FC<Props> = ({ product, show, productVariations, handleClose }) => {
+const ProductDetails: React.FC<Props> = ({ product, show, handleClose }) => {
     const [quantity, setQuantity] = useState<number>(0);
     const [selectedProperty, setSelectedProperty] = useState<string>('');
 
-    const incrementQuantity = () => {
-        if (quantity < productVariations[0].stock) {
-            setQuantity(quantity + 1);
-        }
+    const handleAddToCart = () => {
+        addToCart({
+            product: product.name,
+            quantity: quantity,
+            price: product.productVariations[0].price,
+            property: selectedProperty,
+            name: '',
+            address: '',
+            phone: '',
+            time: '',
+        });
+        handleClose();
     };
 
-    const decrementQuantity = () => {
-        if (quantity > 0) {
-            setQuantity(quantity - 1);
-        }
+    const handleQuantityChange = (newQuantity: number) => {
+        setQuantity(newQuantity);
     };
 
     const handlePropertyChange = (property: string) => {
@@ -40,19 +46,21 @@ const ProductDetails: React.FC<Props> = ({ product, show, productVariations, han
                 <Modal.Body>
                     <Row>
                         <Col>
-                            {productVariations.length > 0 &&
-                                <ProductProperties productVariations={productVariations} onPropertyChange={handlePropertyChange} />
+                            {product.productVariations.length > 0 &&
+                                <ProductProperties productVariations={product.productVariations} onPropertyChange={handlePropertyChange} />
                             }
                         </Col>
                         <Col>
-                            <Button variant="danger" onClick={decrementQuantity}>-</Button>
-                            <span className='h6 mx-2'>{quantity}</span>
-                            <Button variant="danger" onClick={incrementQuantity}>+</Button>
+                            <QuantityButtons
+                                stock={product.productVariations[0].stock}
+                                quantity={quantity}
+                                onQuantityChange={handleQuantityChange}
+                            />
                         </Col>
                     </Row>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button type='submit' disabled={!(selectedProperty && quantity)} onClick={handleClose}>Добавить в Корзину</Button>
+                    <Button type='submit' disabled={!(selectedProperty && quantity)} onClick={handleAddToCart}>Добавить в Корзину</Button>
                 </Modal.Footer>
             </Modal>
         </Form >

@@ -1,41 +1,56 @@
 import React, { useEffect, useState } from 'react';
-import { fetchProductImagesByProductId, fetchProductsByCategoryId } from '../../utils/api';
-import { Col, Form, InputGroup, Row } from 'react-bootstrap';
+import { fetchProductImagesByProductId, fetchProductVariationsByProductId, fetchProductsByCategoryId } from '../../utils/api';
+import { Col, Row } from 'react-bootstrap';
 import ProductCard from './ProductCard';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { Image, Product } from '../../../../model';
-import Icon from '@mdi/react';
-import { mdiMagnify } from '@mdi/js';
+import { Image, Product, ProductVariation } from '../../../../model';
+import ProductFilters from './ProductFilters';
 
 interface Props {
     categoryId: number;
 }
 
-export interface ProductWithImage {
+export interface ProductData {
     id: number;
     category_id: number;
     description: string;
     name: string;
     image: string;
+    productVariations: ProductVariation[];
 }
 
+const sortByPrice = (products: ProductData[], order: 'ASC' | 'DESC') => {
+    return products.sort((a, b) => {
+        if (order === 'ASC') {
+            return a.productVariations[0].price - b.productVariations[0].price;
+        } else {
+            return b.productVariations[0].price - a.productVariations[0].price;
+        }
+    });
+};
+
+
 const ProductList: React.FC<Props> = ({ categoryId }) => {
-    const [products, setProducts] = useState<ProductWithImage[]>([]);
+    const [products, setProducts] = useState<ProductData[]>([]);
     const [offset, setOffset] = useState<number>(5);
     const [hasMore, setHasMore] = useState(true);
-    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [order, setOrder] = useState<'ASC' | 'DESC'>('ASC');
 
     useEffect(() => {
         fetchData();
-    }, [categoryId, offset, searchTerm]);
+    }, [categoryId, offset, order]);
 
     const fetchData = async () => {
         try {
-            const productsData = await fetchProductsByCategoryId(categoryId, offset);
+            const productsData = await fetchProductsByCategoryId(order, categoryId, offset);
+
             const productsWithImages = await Promise.all(productsData.map(async (product: Product) => {
                 const imagesData = await fetchProductImagesByProductId(product.id);
                 const imageUrl = imagesData.map((image: Image) => image.image_url)[0];
-                return { ...product, image: imageUrl };
+
+                const productVariationData = await fetchProductVariationsByProductId(product.id);
+
+                return { ...product, image: imageUrl, productVariations: productVariationData };
             }));
             setProducts(productsWithImages);
             setHasMore(productsData.length > products.length);
@@ -48,43 +63,32 @@ const ProductList: React.FC<Props> = ({ categoryId }) => {
         setOffset(prevOffset => prevOffset + 10);
     };
 
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value);
-    };
-
-    const filterProductsByName = (products: ProductWithImage[], searchTerm: string) => {
-        return products.filter(product =>
-            product.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    };
-
-    const filteredProducts = filterProductsByName(products, searchTerm);
+    const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>, sort: 'name' | 'price') => {
+        if (!e.target.value) {
+            setOrder('ASC');
+        }
+        const selectedOrder = e.target.value as 'ASC' | 'DESC';
+        if (sort == 'name') {
+            setOrder(selectedOrder);
+        }
+        else if (sort == 'price') {
+            const sortedProducts = sortByPrice(products.slice(), selectedOrder);
+            setProducts(sortedProducts);
+        }
+    }
 
     return (
         <>
-            <Row className='justify-content-end mb-4'>
-                <Col md={4}>
-                    <Form.Group>
-                        <InputGroup>
-                            <Form.Control
-                                placeholder="Поиск бренда, товара, категории..."
-                                value={searchTerm}
-                                onChange={handleSearch}
-                            />
-                            <InputGroup.Text><Icon path={mdiMagnify} size={1} /></InputGroup.Text>
-                        </InputGroup>
-                    </Form.Group>
-                </Col>
-            </Row>
+            <ProductFilters handleSortChange={handleSortChange} order={order} />
             <InfiniteScroll
-                dataLength={filteredProducts.length}
+                dataLength={products.length}
                 next={onScroll}
                 hasMore={hasMore}
                 loader={<p>Загрузка...</p>}
                 scrollThreshold={0.9}
             >
                 <Row>
-                    {filteredProducts.map((product) => (
+                    {products.map((product) => (
                         <Col md="3" key={product.id} >
                             <ProductCard product={product} />
                         </Col>
