@@ -15,18 +15,14 @@ interface Props {
 const ProductDetails: React.FC<Props> = ({ product, show, handleClose }) => {
     const [quantity, setQuantity] = useState<number>(0);
     const [selectedProperty, setSelectedProperty] = useState<string>('');
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     const handleAddToCart = () => {
         dispatch(addProduct({
-            product: product.name,
+            name: product.name,
             quantity: quantity,
             price: product.productVariations[0].price,
             property: selectedProperty,
-            name: '',
-            address: '',
-            phone: '',
-            time: '',
         }))
         handleClose();
     };

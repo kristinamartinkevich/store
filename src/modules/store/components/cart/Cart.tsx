@@ -1,30 +1,28 @@
 import { useSelector } from 'react-redux';
 import OrderForm from './OrderForm';
-import { Col, Row } from 'react-bootstrap';
+import { Card, Col, ListGroup, Row } from 'react-bootstrap';
+import { ProductOrder } from '../../../../model';
 
 const Cart = () => {
-    const cartItems = useSelector(state => state.products)
-    console.log(cartItems)
+    const cartItems: ProductOrder[] = useSelector(state => state.products)
 
     return (
         <Row className='justify-content-center my-2'>
             <Col>
-                <h2>Cart</h2>
-                <ul>
-                    {cartItems.map(item => (
-                        <li key={item.product}>
-                            {item.product}
-                            <span>
-                                ₽{item.quantity * item.price}
-                            </span>
-                        </li>
-                    ))}
-                </ul>
+                {cartItems.map((product, index) => (
+                    <Card key={index}>
+                        <Card.Header>{product.name}</Card.Header>
+                        <ListGroup variant="flush">
+                            <ListGroup.Item> ₽{product.quantity * product.price}</ListGroup.Item>
+                            <ListGroup.Item>{product.property}</ListGroup.Item>
+                        </ListGroup>
+                    </Card>
+                ))}
             </Col>
             <Col>
                 <OrderForm />
             </Col>
-        </Row>
+        </Row >
     );
 };
 

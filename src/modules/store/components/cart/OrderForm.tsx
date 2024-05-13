@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
-import { placeOrder } from '../../../../store';
+import { useDispatch, useSelector } from 'react-redux';
+import { clear, placeOrder } from '../../../../store';
+import { ProductOrder } from '../../../../model';
 
 type fields = 'name' | 'address' | 'phone' | 'time';
 
@@ -15,7 +16,9 @@ const fields: fieldForm[] = [
 ];
 
 const OrderForm = () => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const cartItems: ProductOrder[] = useSelector(state => state.products);
+
     const [formData, setFormData] = useState({
         name: '',
         address: '',
@@ -39,7 +42,13 @@ const OrderForm = () => {
             phone: formData.phone,
             time: formData.time,
         }))
-        localStorage.setItem("order", JSON.stringify(formData));
+        setFormData({
+            name: '',
+            address: '',
+            phone: '',
+            time: ''
+        })
+        dispatch(clear());
     };
 
     return (
@@ -58,7 +67,7 @@ const OrderForm = () => {
                 </Form.Group>
             ))}
 
-            <Button variant="primary" type="submit" className='my-2'>
+            <Button variant="primary" type="submit" className='my-2' disabled={!cartItems.length}>
                 Оформить заказ
             </Button>
         </Form>

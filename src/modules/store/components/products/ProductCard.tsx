@@ -29,7 +29,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
                 <Card.Img variant="top" src={product.image} style={{ height: '10rem', width: 'auto' }} />
                 <Card.Body>
                     <Card.Text>
-                        <span className='text-truncate product-title h6'>{product.name}</span>
+                        <div className='text-truncate product-title h6'>{product.name}</div>
                         <span className='text-primary h4' >
                             ₽{minPrice}
                         </span>

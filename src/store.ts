@@ -11,11 +11,15 @@ const addToCartSlice = createSlice({
         },
         placeOrder: (state, action) => {
             state.orderInfo = action.payload;
+        },
+        clear: (state) => {
+            state.orderInfo = {} as OrderInfo;
+            state.products = [];
         }
     }
 });
 
-export const { addProduct, placeOrder } = addToCartSlice.actions;
+export const { addProduct, placeOrder, clear } = addToCartSlice.actions;
 
 export const store = configureStore({
     reducer: addToCartSlice.reducer

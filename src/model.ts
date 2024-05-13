@@ -46,7 +46,7 @@ export interface ProductVariationPropertyValues {
 }
 
 export interface ProductOrder {
-    product: string;
+    name: string;
     quantity: number;
     price: number;
     property: string;
