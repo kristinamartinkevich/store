@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Modal, Button, Row, Col, Form } from 'react-bootstrap';
 import ProductProperties from './ProductProperties';
 import { ProductData } from './ProductList';
-import { addToCart } from '../../../../actions';
 import QuantityButtons from './QuantityButtons';
+import { useDispatch } from 'react-redux';
+import { addProduct } from '../../../../store';
 
 interface Props {
     product: ProductData;
@@ -14,9 +15,10 @@ interface Props {
 const ProductDetails: React.FC<Props> = ({ product, show, handleClose }) => {
     const [quantity, setQuantity] = useState<number>(0);
     const [selectedProperty, setSelectedProperty] = useState<string>('');
+    const dispatch = useDispatch()
 
     const handleAddToCart = () => {
-        addToCart({
+        dispatch(addProduct({
             product: product.name,
             quantity: quantity,
             price: product.productVariations[0].price,
@@ -25,7 +27,7 @@ const ProductDetails: React.FC<Props> = ({ product, show, handleClose }) => {
             address: '',
             phone: '',
             time: '',
-        });
+        }))
         handleClose();
     };
 
@@ -47,7 +49,9 @@ const ProductDetails: React.FC<Props> = ({ product, show, handleClose }) => {
                     <Row>
                         <Col>
                             {product.productVariations.length > 0 &&
-                                <ProductProperties productVariations={product.productVariations} onPropertyChange={handlePropertyChange} />
+                                <ProductProperties
+                                    productVariations={product.productVariations}
+                                    onPropertyChange={handlePropertyChange} />
                             }
                         </Col>
                         <Col>

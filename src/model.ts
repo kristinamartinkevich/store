@@ -50,7 +50,9 @@ export interface ProductOrder {
     quantity: number;
     price: number;
     property: string;
+}
 
+export interface OrderInfo {
     name: string;
     address: string;
     phone: string;

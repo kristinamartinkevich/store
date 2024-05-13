@@ -9,17 +9,17 @@ interface Props {
 }
 
 const ProductCard: React.FC<Props> = ({ product }) => {
-    const [show, setShow] = useState(false);
+    const [showProductDetails, setShowProductDetails] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<ProductData>();
     const minPrice = Math.min(...product?.productVariations.map((productVariation: ProductVariation) => productVariation.price));
 
     const handleShowProductDetails = () => {
         setSelectedProduct(product);
-        setShow(true);
+        setShowProductDetails(true);
     };
 
     const handleCloseProductDetails = () => {
-        setShow(false);
+        setShowProductDetails(false);
         setSelectedProduct(undefined);
     };
 
@@ -29,18 +29,18 @@ const ProductCard: React.FC<Props> = ({ product }) => {
                 <Card.Img variant="top" src={product.image} style={{ height: '10rem', width: 'auto' }} />
                 <Card.Body>
                     <Card.Text>
-                        <h6 className='text-truncate product-title'>{product.name}</h6>
+                        <span className='text-truncate product-title h6'>{product.name}</span>
                         <span className='text-primary h4' >
                             ₽{minPrice}
                         </span>
                     </Card.Text>
-                    <Button onClick={handleShowProductDetails}>Добавить в Корзину</Button>
+                    <Button onClick={handleShowProductDetails}>Выбрать</Button>
                 </Card.Body>
             </Card>
             {selectedProduct && (
                 <ProductDetails
                     product={selectedProduct}
-                    show={show}
+                    show={showProductDetails}
                     handleClose={handleCloseProductDetails}
                 />
             )}

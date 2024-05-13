@@ -55,8 +55,8 @@ const ProductProperties: React.FC<Props> = ({ productVariations, onPropertyChang
                 properties.length == 0 ? (
                     <p>Загрузка свойств товара...</p>
                 ) : (
-                    properties.map((property) => (
-                        <span key={property.name}>
+                    properties.map((property, index) => (
+                        <span key={index}>
                             <Form.Select onChange={handleSelectChange} required>
                                 <option className='text-muted'>Выбрать {property.name}</option>
                                 {property.values.map((value) => (

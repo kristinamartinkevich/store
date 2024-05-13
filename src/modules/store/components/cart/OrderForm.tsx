@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
+import { placeOrder } from '../../../../store';
 
 type fields = 'name' | 'address' | 'phone' | 'time';
 
@@ -13,13 +15,13 @@ const fields: fieldForm[] = [
 ];
 
 const OrderForm = () => {
+    const dispatch = useDispatch()
     const [formData, setFormData] = useState({
         name: '',
         address: '',
         phone: '',
         time: ''
     });
-
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -31,6 +33,12 @@ const OrderForm = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log('Form submitted:', formData);
+        dispatch(placeOrder({
+            name: formData.name,
+            address: formData.address,
+            phone: formData.phone,
+            time: formData.time,
+        }))
         localStorage.setItem("order", JSON.stringify(formData));
     };
 

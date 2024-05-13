@@ -1,9 +1,10 @@
-import { ProductOrder } from '../../../../model';
+import { useSelector } from 'react-redux';
 import OrderForm from './OrderForm';
 import { Col, Row } from 'react-bootstrap';
 
 const Cart = () => {
-    const cartItems: ProductOrder[] = [];
+    const cartItems = useSelector(state => state.products)
+    console.log(cartItems)
 
     return (
         <Row className='justify-content-center my-2'>

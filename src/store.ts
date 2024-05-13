@@ -1,6 +1,24 @@
-import { createStore } from 'redux';
-import rootReducer from './reducers';
+import { createSlice, configureStore } from '@reduxjs/toolkit';
+import { ProductData } from './modules/store/components/products/ProductList';
+import { OrderInfo } from './model';
 
-const store = createStore(rootReducer);
+const addToCartSlice = createSlice({
+    name: 'cart',
+    initialState: { products: [] as ProductData[], orderInfo: {} as OrderInfo },
+    reducers: {
+        addProduct: (state, action) => {
+            state.products.push(action.payload);
+        },
+        placeOrder: (state, action) => {
+            state.orderInfo = action.payload;
+        }
+    }
+});
 
-export default store;
+export const { addProduct, placeOrder } = addToCartSlice.actions;
+
+export const store = configureStore({
+    reducer: addToCartSlice.reducer
+});
+
+store.subscribe(() => console.log(store.getState()));
